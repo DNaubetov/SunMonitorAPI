@@ -23,8 +23,7 @@ inverter_database = Database(Inverter)
 
 @inverter_router.get("/controller/{controller_id}", response_model=List[Inverter],
                      summary="Ручка для получения контроллера")
-async def retrieve_controller_inverters(controller_id: PydanticObjectId,
-                                        user: str = Depends(authenticate)) -> List[Inverter]:
+async def retrieve_controller_inverters(controller_id: PydanticObjectId) -> List[Inverter]:
     inverters = await Inverter.find(Inverter.controller == controller_id).to_list()
     if not inverters:
         raise HTTPException(
@@ -36,8 +35,7 @@ async def retrieve_controller_inverters(controller_id: PydanticObjectId,
 
 @inverter_router.get("/controller/registers/{controller_id}", response_model=List[InverterForMC],
                      summary="Ручка для получения контроллера")
-async def retrieve_controller_inverters_reg(controller_id: PydanticObjectId,
-                                            user: str = Depends(authenticate)) -> List[InverterForMC]:
+async def retrieve_controller_inverters_reg(controller_id: PydanticObjectId) -> List[InverterForMC]:
     inverters = await Inverter.find(Inverter.controller == controller_id).to_list()
     if not inverters:
         raise HTTPException(
@@ -50,14 +48,14 @@ async def retrieve_controller_inverters_reg(controller_id: PydanticObjectId,
 
 @inverter_router.get("/", response_model=List[Inverter],
                      summary="Ручка для получения всех инверторов")
-async def retrieve_all_inverters(user: str = Depends(authenticate)) -> List[Inverter]:
+async def retrieve_all_inverters() -> List[Inverter]:
     inverters = await inverter_database.get_all()
     return inverters
 
 
 @inverter_router.get("/{inverter_id}", response_model=Inverter,
                      summary="Ручка для получения инвертора")
-async def retrieve_inverter(inverter_id: PydanticObjectId, user: str = Depends(authenticate)) -> Inverter:
+async def retrieve_inverter(inverter_id: PydanticObjectId) -> Inverter:
     inverter = await inverter_database.get(inverter_id)
     if not inverter:
         raise HTTPException(
@@ -87,6 +85,7 @@ async def create_inverter(body: InverterCreate, user: User = Depends(authenticat
         controller=body.controller,
         create_date=datetime.datetime.now(datetime.UTC),
         creator=user.id,
+        location = body.location,
         capacity=body.capacity,
         registers=body.registers
     )

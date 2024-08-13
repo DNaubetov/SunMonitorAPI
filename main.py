@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from database.connection import Settings
 from routes.api_key import api_key_router
+from routes.chart_all_inv import data_all_inv_router
 from routes.events import event_router
 from routes.users import user_router
 from routes.controllers import controller_router
@@ -38,17 +39,17 @@ app.add_middleware(
 # Register routes
 
 app.include_router(user_router, prefix="/user")
-app.include_router(event_router, prefix="/event")
 app.include_router(controller_router, prefix='/controller')
 app.include_router(inverter_router, prefix='/inverter')
 app.include_router(register_router, prefix='/register')
 app.include_router(data_router, prefix='/data')
 app.include_router(api_key_router, prefix='/key')
+app.include_router(data_all_inv_router, prefix='/data/chart')
 
 
 @app.get("/")
 async def home():
-    return RedirectResponse(url="/event/")
+    return RedirectResponse(url="/docs")
 
 
 if __name__ == '__main__':

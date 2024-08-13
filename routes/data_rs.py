@@ -7,12 +7,10 @@ from auth.checking_the_key import authenticate_the_key
 from core.chart import get_data_for_day, get_data_for_month, get_data_for_year
 from core.data_rs import get_last_data, get_all_data
 from database.connection import Database
-from fastapi import APIRouter, Depends, HTTPException, status, Path, Query
+from fastapi import APIRouter, Depends, HTTPException, Path, Query
 
-from models.invertors import Inverter
 from models.received_data import AllData
-from models.sent_data import SendChartData, SendChartDataAllInv
-from validators.date import DateRangeModel
+from models.sent_data import SendChartData
 from validators.serial_number import SerialNumberModel
 
 """
@@ -21,13 +19,13 @@ from validators.serial_number import SerialNumberModel
 3. Нужно сделать ручку для получения данных с мк. 
 """
 
-data_router = APIRouter(tags=["Data RS"])
+data_router = APIRouter()
 
 data_database = Database(AllData)
 
 
 @data_router.post("/add",
-                  summary="Ручка для записи данных")
+                  summary="Ручка для записи данных",  tags=['Data add'])
 async def retrieve_all_data(data: List[AllData],
                             api_key: uuid.UUID = Depends(authenticate_the_key)) -> bool:
     for i in data:
@@ -38,42 +36,28 @@ async def retrieve_all_data(data: List[AllData],
 
 @data_router.get("/{serial_number}", response_model=List[AllData],
                  summary="Ручка для получения всех данных")
-async def retrieve_all_data(serial_number: SerialNumberModel = Depends(),
-                            date_range: DateRangeModel = Depends(),
+async def retrieve_all_data(start_date: datetime.date,
+                            end_date: datetime.date,
+                            serial_number: SerialNumberModel = Depends(),
                             skip: int = Query(0, ge=0, description="Количество пропущенных записей"),
                             limit: int = Query(10, ge=1, le=100,
                                                description="Максимальное количество записей для возвращения"),
                             user: str = Depends(authenticate)) -> List[AllData]:
+
     data = await get_all_data(serial_number.serial_number,
-                              date_range.start_date,
-                              date_range.end_date,
+                              start_date,
+                              end_date,
                               skip, limit)
     return data
 
 
-@data_router.get("/last/{serial_number}")
+@data_router.get("/last/{serial_number}", tags=['Data RS'])
 async def read_last_data(serial_number: SerialNumberModel = Depends()):
     data = await get_last_data(serial_number.serial_number)
     return data
 
 
-@data_router.get("/chart/day/all/{target_date}", response_model=List[SendChartDataAllInv],
-                 summary="Ручка для получения всех данных за target_date, со всех инверторов")
-async def data_chart_for_day_all_inverters(
-        target_date: datetime.date = Path(..., description="Дата в формате ГГГГ-ММ-ДД")):
-    if not target_date:
-        raise HTTPException(status_code=400, detail="Некорректная дата")
-    day_data = list()
-    async for i in Inverter.find():
-        data = await get_data_for_day(target_date, i.serial_number)
-        day_data.append(SendChartDataAllInv(description='Выработка за день',
-                                            serial_number=i.serial_number,
-                                            unit='w', data_list=data))
-
-    return day_data
-
-
-@data_router.get("/chart/day/{serial_number}/{target_date}", response_model=SendChartData)
+@data_router.get("/chart/day/{serial_number}/{target_date}", response_model=SendChartData,  tags=['Data RS'])
 async def data_chart_for_day(
         target_date: datetime.date = Path(..., description="Дата в формате ГГГГ-ММ-ДД"),
         serial_number: SerialNumberModel = Depends()):
@@ -84,7 +68,8 @@ async def data_chart_for_day(
     return day_data
 
 
-@data_router.get("/chart/month/{serial_number}/{year}/{month}", response_model=SendChartData)
+@data_router.get("/chart/month/{serial_number}/{year}/{month}", response_model=SendChartData,
+                 tags=['Data RS'])
 async def data_chart_for_month(
         year: int = Path(..., ge=2000, le=2100, description="Год в формате ГГГГ"),
         month: int = Path(..., ge=1, le=12, description="Месяц в формате ММ"),
@@ -95,7 +80,7 @@ async def data_chart_for_month(
     return month_data
 
 
-@data_router.get("/chart/{serial_number}/{year}", response_model=SendChartData)
+@data_router.get("/chart/{serial_number}/{year}", response_model=SendChartData,  tags=['Data RS'])
 async def data_chart_for_year(
         year: int = Path(..., ge=2000, le=2100, description="Год в формате ГГГГ"),
         serial_number: SerialNumberModel = Depends()):

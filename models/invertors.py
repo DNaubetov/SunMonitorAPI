@@ -25,6 +25,11 @@ class InverterCreate(InverterForMC, BaseModel):
     capacity: constr(min_length=1, max_length=100)
     registers: constr(min_length=1, max_length=100)
     controller: PydanticObjectId
+    location: constr(min_length=1, max_length=100) = "АО ТЭС"
+
+    @field_validator('location')
+    def convert_to_lower(cls, v: str) -> str:
+        return v.upper()
 
 
 class Inverter(Document, InverterCreate):
