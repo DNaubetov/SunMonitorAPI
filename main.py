@@ -42,9 +42,9 @@ app.include_router(user_router, prefix="/user")
 app.include_router(controller_router, prefix='/controller')
 app.include_router(inverter_router, prefix='/inverter')
 app.include_router(register_router, prefix='/register')
+app.include_router(data_all_inv_router, prefix='/data/chart')
 app.include_router(data_router, prefix='/data')
 app.include_router(api_key_router, prefix='/key')
-app.include_router(data_all_inv_router, prefix='/data/chart')
 
 
 @app.get("/")

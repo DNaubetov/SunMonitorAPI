@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     async def initialize_database(self):
         client = AsyncIOMotorClient(self.DATABASE_URL)
         await init_beanie(database=client.get_default_database(),
-                          document_models=[Event, User, Controller, Inverter, AllData, Registers, ApiKey])
+                          document_models=[User, Controller, Inverter, AllData, Registers, ApiKey])
 
         if not await User.find_one(User.role == RoleEnum.super_admin):
             hashed_password = hash_password.create_hash(self.SUPER_ADMIN_PASS)

@@ -44,6 +44,7 @@ async def data_chart_for_day_all_inverters(
     day_data = list()
     async for i in Inverter.find():
         data = await get_data_for_day(target_date, i.serial_number)
+        print(data)
         day_data.append(SendChartDataAllInv(description='Выработка за день',
                                             serial_number=i.serial_number,
                                             unit='w', data_list=data))

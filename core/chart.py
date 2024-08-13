@@ -24,7 +24,6 @@ async def get_data_for_day(target_date: datetime.date, serial_number) -> List:
 
 async def get_data_for_month(year: int, month: int, serial_number: str) -> List:
     days = [int(i) for i in calendar.month(year, month).split() if i.isdigit() and 0 < int(i) < 32]
-    print(days)
     data = []
     for day in days:
         target_days = datetime.date(year=year, month=month, day=day)
