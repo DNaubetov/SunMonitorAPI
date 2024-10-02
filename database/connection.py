@@ -38,7 +38,8 @@ class Settings(BaseSettings):
             print("Superuser created")
 
     class Config:
-        env_file = ".env"
+        # env_file = ".env"
+        env_file = ".env.local"
 
 
 class Database:

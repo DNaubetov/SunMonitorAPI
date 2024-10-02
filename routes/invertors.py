@@ -68,8 +68,8 @@ async def retrieve_inverter(inverter_id: PydanticObjectId) -> Inverter:
 @inverter_router.post("/new", summary="Ручка создания инвертора")
 async def create_inverter(body: InverterCreate, user: User = Depends(authenticate)) -> dict:
     """Нужно поставить ограничение по ролям, только админ может"""
-    inverter_exist = await Inverter.find_one((Inverter.serial_number == body.serial_number and
-                                              Inverter.slave == body.slave) or
+    inverter_exist = await Inverter.find_one(Inverter.serial_number == body.serial_number or
+                                             Inverter.slave == body.slave or
                                              Inverter.controller == body.controller)
 
     if inverter_exist:
@@ -80,12 +80,12 @@ async def create_inverter(body: InverterCreate, user: User = Depends(authenticat
 
     inverter = Inverter(
         name=body.name,
-        serial_number=body.serial_number,
+        serial_number=body.serial_number.upper(),
         slave=body.slave,
         controller=body.controller,
         create_date=datetime.datetime.now(datetime.UTC),
         creator=user.id,
-        location = body.location,
+        location=body.location,
         capacity=body.capacity,
         registers=body.registers
     )

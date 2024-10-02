@@ -10,9 +10,16 @@ class FunctionEnum(int, Enum):
 
 
 class CountEnum(int, Enum):
-    bit16 = 1
-    bit32 = 2
-    bit64 = 4
+    bit16uint = 1
+    bit32uint = 2
+    bit64uint = 4
+    bit16int = 11
+    bit32int = 12
+    bit64int = 14
+    bit16float = 21
+    bit32float = 22
+    bit64float = 24
+    bit_str = 31
 
 
 class StatusRegister(BaseModel):
@@ -32,7 +39,6 @@ class ReadRegistersList(BaseModel):
     today_generate_energy: Register
     temperature: Register
     total_generate_energy: Register
-    work_time_total: Register
 
 
 class CreateRegisters(BaseModel):
@@ -48,16 +54,5 @@ class Registers(Document, CreateRegisters):
     create_date: datetime.datetime = datetime.datetime.now(datetime.UTC)
     creator: PydanticObjectId
 
-    # class Config:
-    #     json_schema_extra = {
-    #         "example": {
-    #             "title": "FastAPI BookLaunch",
-    #             "image": "https://linktomyimage.com/image.png",
-    #             "description": "We will be discussing the contents of the FastAPI book in this event.Ensure to come with your own copy to win gifts!",
-    #             "tags": ["python", "fastapi", "book", "launch"],
-    #             "location": "Google Meet"
-    #         }
-    #     }
-    #
     class Settings:
         collection = "registers"

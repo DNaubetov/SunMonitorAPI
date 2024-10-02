@@ -3,22 +3,32 @@ import uuid
 from typing import List
 from auth.authenticate import authenticate
 from beanie import PydanticObjectId
+
+from auth.checking_the_key import authenticate_the_key
+from core.inverters_for_mc import registers_for_mc
 from database.connection import Database
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from models.api_key import ApiKey
 from models.controllers import Controller, ControllerCreate
+from models.invertors import Inverter
 from models.users import User
-
-"""
-1. Нужно добавить ограничение по ролям!
-2. Нужно добавить ручку для получения данных о инверторах, контроллером!
-3. Нужно сделать защиту от дурака, что бы все вводилось в нижнем регистре
-"""
 
 controller_router = APIRouter(tags=["Controllers"])
 
 controller_database = Database(Controller)
+
+
+@controller_router.get("/data/logger/",
+                       summary="Ручка для получения контроллера")
+async def retrieve_controller(location: str, api_key: uuid.UUID = Depends(authenticate_the_key)):
+    controllers = await Controller.find(Controller.location == location.lower()).to_list()
+    inverters = {controller.name: {'connect': controller.connect,
+                                   'inv_reg': await registers_for_mc(
+                                       await Inverter.find(Inverter.controller == controller.id).to_list())}
+                 for controller in controllers}
+
+    return inverters
 
 
 @controller_router.get("/", response_model=List[Controller],
@@ -52,21 +62,12 @@ async def create_controller(body: ControllerCreate, user: User = Depends(authent
     create_date = datetime.datetime.now(datetime.UTC)
     controller = Controller(
         name=body.name,
-        location=body.location,
+        location=body.location.lower(),
         connect=body.connect,
         create_date=create_date,
         creator=user.id)
     await controller_database.save(controller)
 
-    create_api_key = ApiKey(
-        name='Name Key',
-        key=uuid.uuid4(),
-        status=True,
-        creator=user.id,
-        create_date=create_date
-
-    )
-    await create_api_key.create()
     return {"message": "Контроллер создан успешно"}
 
 

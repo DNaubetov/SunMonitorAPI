@@ -1,10 +1,16 @@
 import datetime
 from beanie import Document, PydanticObjectId
-from pydantic import BaseModel, field_validator, constr
+from pydantic import BaseModel, field_validator, constr, IPvAnyAddress
 
 
-class Connect(BaseModel):
-    method: constr(min_length=1, max_length=10)
+class ConnectTCP(BaseModel):
+    method: str = 'tcp'
+    port: int = 512
+    ip: IPvAnyAddress
+
+
+class ConnectRTU(BaseModel):
+    method: str = 'rtu'
     port: constr(min_length=1, max_length=10)
     baudrate: int
     parity: str
@@ -23,7 +29,7 @@ class Connect(BaseModel):
 class ControllerCreate(BaseModel):
     name: constr(min_length=1, max_length=100)
     location: constr(min_length=1, max_length=100)
-    connect: Connect
+    connect: ConnectRTU | ConnectTCP
 
     @field_validator('name')
     def convert_to_lower(cls, v: str) -> str:

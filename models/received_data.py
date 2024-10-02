@@ -19,7 +19,6 @@ class ListReceivedData(BaseModel):
     today_generate_energy: ReceivedData
     temperature: ReceivedData
     total_generate_energy: ReceivedData
-    work_time_total: ReceivedData
 
 
 class AllData(Document):
