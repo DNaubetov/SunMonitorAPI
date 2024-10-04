@@ -34,24 +34,24 @@ async def retrieve_all_data(data: List[AllData],
     return True
 
 
-@data_router.get("/{serial_number}", response_model=List[AllData],
-                 summary="Ручка для получения всех данных")
-async def retrieve_all_data(start_date: datetime.date,
-                            end_date: datetime.date,
-                            serial_number: SerialNumberModel = Depends(),
-                            skip: int = Query(0, ge=0, description="Количество пропущенных записей"),
-                            limit: int = Query(10, ge=1, le=100,
-                                               description="Максимальное количество записей для возвращения"),
-                            user: str = Depends(authenticate)) -> List[AllData]:
+# @data_router.get("/{serial_number}", response_model=List[AllData],
+#                  summary="Ручка для получения всех данных")
+# async def retrieve_all_data(start_date: datetime.date,
+#                             end_date: datetime.date,
+#                             serial_number: SerialNumberModel = Depends(),
+#                             skip: int = Query(0, ge=0, description="Количество пропущенных записей"),
+#                             limit: int = Query(10, ge=1, le=100,
+#                                                description="Максимальное количество записей для возвращения"),
+#                             user: str = Depends(authenticate)) -> List[AllData]:
+#
+#     data = await get_all_data(serial_number.serial_number,
+#                               start_date,
+#                               end_date,
+#                               skip, limit)
+#     return data
 
-    data = await get_all_data(serial_number.serial_number,
-                              start_date,
-                              end_date,
-                              skip, limit)
-    return data
 
-
-@data_router.get("/last/{serial_number}", tags=['Data RS'])
+@data_router.get("/last/{serial_number}",  tags=['all inv last data'])
 async def read_last_data(serial_number: SerialNumberModel = Depends()):
     data = await get_last_data(serial_number.serial_number)
     return data
