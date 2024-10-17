@@ -30,16 +30,6 @@ async def data_chart_for_year_all_inverters(year: int = Path(..., ge=2000, le=21
                                             unit='kwh', data_list=data))
     return day_data
 
-@data_all_inv_router.get("/year/all/{year}", response_model=List[SendChartDataAllInv], tags=['all inv chart'])
-async def data_chart_for_year_all_inverters(year: int = Path(..., ge=2000, le=2100, description="Год в формате ГГГГ")):
-    day_data = list()
-    async for i in Inverter.find():
-        data = await get_data_for_year(year, i.serial_number)
-        day_data.append(SendChartDataAllInv(description='Выработка за день',
-                                            serial_number=i.serial_number,
-                                            unit='kwh', data_list=data))
-    return day_data
-
 
 @data_all_inv_router.get("/month/all/{year}/{month}", response_model=List[SendChartDataAllInv], tags=['all inv chart'])
 async def data_chart_for_month_all_inverters(

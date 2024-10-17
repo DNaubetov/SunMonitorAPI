@@ -11,7 +11,7 @@ class ConnectTCP(BaseModel):
 
 class ConnectRTU(BaseModel):
     method: str = 'rtu'
-    port: constr(min_length=1, max_length=10)
+    port: constr(min_length=1, max_length=100)
     baudrate: int
     parity: str
     stopbits: int

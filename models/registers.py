@@ -3,6 +3,8 @@ from enum import Enum
 from pydantic import BaseModel, constr, field_validator
 from beanie import Document, PydanticObjectId
 
+from models.ops_registers import ReadRegistersListOPS
+
 
 class FunctionEnum(int, Enum):
     read_holding_registers = 3
@@ -43,7 +45,7 @@ class ReadRegistersList(BaseModel):
 
 class CreateRegisters(BaseModel):
     models: constr(min_length=1, max_length=100)
-    registers_list: ReadRegistersList
+    registers_list: ReadRegistersList | ReadRegistersListOPS
 
     @field_validator('models')
     def convert_to_lower(cls, v: str) -> str:
