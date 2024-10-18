@@ -1,6 +1,6 @@
 import datetime
 from typing import List
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 from models.invertors import Serial_Number
 
@@ -17,4 +17,5 @@ class SendChartData(BaseModel):
 
 
 class SendChartDataAllInv(SendChartData):
+    location: constr(min_length=1, max_length=100)
     serial_number: Serial_Number
