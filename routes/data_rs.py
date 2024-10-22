@@ -9,6 +9,7 @@ from core.data_rs import get_last_data, get_all_data
 from database.connection import Database
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 
+from models.invertors import Inverter
 from models.received_data import AllData
 from models.sent_data import SendChartData
 from validators.serial_number import SerialNumberModel

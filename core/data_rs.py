@@ -33,15 +33,15 @@ async def collect_inverter_data():
         summary_data = {
             "serial_number": "All",
             "inverter_registers_data": {
-                "current_power_sum": {
+                "current_power": {
                     "data": str(sums["current_power"]),
                     "unit": "w"
                 },
-                "today_generate_energy_sum": {
+                "today_generate_energy": {
                     "data": str(sums["today_generate_energy"]),
                     "unit": "kwh"
                 },
-                "total_generate_energy_sum": {
+                "total_generate_energy": {
                     "data": str(sums["total_generate_energy"]),
                     "unit": "kwh"
                 }
