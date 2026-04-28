@@ -10,6 +10,7 @@ class ReceivedStatus(BaseModel):
 
 
 class ReceivedData(ReceivedStatus):
+    data: float | None | str | int
     unit: str | None
 
 

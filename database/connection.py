@@ -3,7 +3,6 @@ from typing import Optional
 from auth.hash_password import HashPassword
 from models.api_key import ApiKey
 from models.controllers import Controller
-from models.events import Event
 from models.invertors import Inverter
 from models.received_data import AllData
 from models.registers import Registers
@@ -38,8 +37,8 @@ class Settings(BaseSettings):
             print("Superuser created")
 
     class Config:
-        env_file = ".env"
-        # env_file = ".env.local"
+        # env_file = ".env"
+        env_file = ".env.tash"
 
 
 class Database:
